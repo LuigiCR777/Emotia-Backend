@@ -19,14 +19,19 @@ public class Otp {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column (name = "id_otp")
     private int Idotp;
+
     @ManyToOne
     @JoinColumn(name = "id_usuario")
     private Usuarios Idusuario;
+
     private String codigo;
+
     @Column (name = "fecha_generado")
     private LocalDateTime fechaGenerado;
+
     @Column (name = "valido_hasta")
     private LocalDateTime validoHasta;
+    
     private String estado;
 
     public int getIdotp() {

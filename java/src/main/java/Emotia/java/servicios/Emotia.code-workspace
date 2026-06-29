@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "../../../../../../../../Emotia"
+		},
+		{
+			"path": "../../../../../../.."
+		},
+		{
+			"path": "../../../../../../../../../Users/USER/OneDrive/Documentos/Emotia-Biometrico"
+		}
+	],
+	"settings": {
+		"java.compile.nullAnalysis.mode": "automatic",
+		"java.configuration.updateBuildConfiguration": "interactive"
+	}
+}

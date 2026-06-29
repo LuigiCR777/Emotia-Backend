@@ -24,14 +24,6 @@ public class servicioIMPL implements ITservicio{
 
     @Autowired
     ITrepositorioOtp repositorioOtp;
-
-    /*private final GoogleAuthenticator gAuth = new GoogleAuthenticator();
-
-    // ✅ Generar clave secreta en Base32
-    public String generarClaveSecreta() {
-        GoogleAuthenticatorKey key = gAuth.createCredentials();
-        return key.getKey();
-    }*/
     
 
     @Override
@@ -41,83 +33,38 @@ public class servicioIMPL implements ITservicio{
     }
 
 
-    /*@Override
-    public void enviarotp(OtpREquest request) { 
-    // buscar usuario por telefono
-    Usuarios usuario = repositorioUsuario.findByTelefono(request.getTelefono());
-    // si NO existe, crearlo
-    if (usuario == null) {
-        usuario = new Usuarios();
-        usuario.setTelefono(request.getTelefono());
-        usuario = repositorioUsuario.save(usuario);
-    }
-    String codigoOtp = String.valueOf((int)(Math.random() * 900000) + 100000);
-
-    // crear OTP
-    Otp otp = new Otp();
-    otp.setCodigo(codigoOtp);
-    otp.setEstado("PENDIENTE");
-    otp.setFechaGenerado(LocalDateTime.now());
-    otp.setValidoHasta(LocalDateTime.now().plusDays(30));
-    // relacion con usuario
-    otp.setIdusuario(usuario);
-    // guardar otp
-    repositorioOtp.save(otp);
-    // mostrar otp
-    System.out.println("OTP generado: " + codigoOtp);
-}*/
-
-
-/*@Override
-public boolean ValidarOtp(LogginRequest request) {
-    // buscar usuario por telefono
-    Usuarios usuario = repositorioUsuario.findByTelefono(request.getTelefono());
-    // validar usuario
-    if (usuario == null) {
-        System.out.println("Usuario no encontrado");
-        return false;
-    }
-    // buscar otp
-    Otp otp =repositorioOtp.findByCodigo(request.getCodigo());
-    // validar otp existente
-    if (otp == null) {System.out.println("OTP incorrecto");
-    return false;
-    }
-    // validar expiracion
-    if (otp.getValidoHasta().isBefore(LocalDateTime.now())) 
-        {System.out.println("OTP expirado");
-        return false;
-    }
-    // validar estado
-    if (!"PENDIENTE".equals(otp.getEstado())) {
-    System.out.println("OTP ya utilizado");
-    return false;
-    }
-    // marcar como usado
-    otp.setEstado("USADO");
-    repositorioOtp.save(otp);
-    System.out.println("Ingreso correcto");
-    return true;
-}
-*/
-
-
     @Override
-    public Usuarios completarPerfil(CompletarPerfilRequest request) {
+public Usuarios completarPerfil(CompletarPerfilRequest request) {
 
-    // buscar usuario por telefono
-    Usuarios usuario =repositorioUsuario.findByTelefono(request.getTelefono());
+    // MODIFICADO: busca por id si viene, si no busca por teléfono
+    Usuarios usuarioExistente = null;
 
-    // validar existencia
-    if (usuario == null) {System.out.println("Usuario no encontrado");
-
-    return null;
+    if (request.getId() != null) {
+        usuarioExistente = repositorioUsuario.findById(request.getId()).orElse(null);
+    } else if (request.getTelefono() != null) {
+        usuarioExistente = repositorioUsuario.findByTelefono(request.getTelefono());
     }
 
-    // completar datos
-    usuario.setNombre(request.getNombre());
-    // guardar cambios
-    return repositorioUsuario.save(usuario);
+    if (usuarioExistente == null) {
+        throw new RuntimeException("Error: No se encontró el usuario.");
     }
 
+    try {
+        // Solo actualiza los campos que vienen en el request (no pisa los nulos)
+        if (request.getNombre() != null) usuarioExistente.setNombre(request.getNombre());
+        if (request.getApellido() != null) usuarioExistente.setApellido(request.getApellido());
+        if (request.getCorreo() != null) usuarioExistente.setCorreo(request.getCorreo());
+        if (request.getNacimiento() != null) usuarioExistente.setNacimiento(request.getNacimiento());
+        if (request.getPais() != null) usuarioExistente.setPais(request.getPais());
+
+        return repositorioUsuario.save(usuarioExistente);
+
+    } catch (Exception e) {
+        System.out.println("Falló el sistema al actualizar perfil: " + e);
+        throw new RuntimeException("No se pudo completar el perfil del usuario", e);
+    }
+}
+
+
+        
 }

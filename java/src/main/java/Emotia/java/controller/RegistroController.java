@@ -26,85 +26,53 @@ public class RegistroController {
     @Autowired
     private ITrepositorioUsuario repositorioUsuario;
 
-    @Autowired
-    private ITrepositorioOtp repositorioOtp;
+    // ==========================
+    // VERIFICAR Y GUARDAR NUMERO
+    //===========================
+    @PostMapping("/firebase-login")
+    public ResponseEntity<?> firebaseLogin(
+            @RequestBody LogginRequest request) {
 
-    // =========================
-    // TEST USUARIOS
-    // =========================
-    @GetMapping("/usuarios")
-    public List<Usuarios> listarUsuarios() {
+        String telefono = request.getTelefono();
+        
+        Usuarios usuario = repositorioUsuario.findByTelefono(telefono);
 
-        return repositorioUsuario.findAll();
+        if (usuario == null) {
+
+            usuario = new Usuarios();
+            usuario.setTelefono(telefono);
+        }
+
+        usuario = repositorioUsuario.save(usuario);
+        
+    return ResponseEntity.ok(usuario);
     }
-
-    // =========================
-    // TEST OTP
-    // =========================
-    @GetMapping("/otp")
-    public List<Otp> listarOtp() {
-
-        return repositorioOtp.findAll();
-    }
-
-    // =========================
-    // ENVIAR OTP
-    // =========================
-    /*@PostMapping("/enviar-otp")
-    public ResponseEntity<?> enviarOtp(@RequestBody OtpREquest request) {
-
-    servicio.enviarotp(request);
-
-    return ResponseEntity.ok(
-            java.util.Map.of(
-                    "status", "OK",
-                    "message", "OTP enviado correctamente"
-            )
-    );
-}
-
-    // =========================
-    // VALIDAR OTP
-    // =========================
-    @PostMapping("/validar-otp")
-    public ResponseEntity<?> validarOtp(@RequestBody LogginRequest request) {
-
-    boolean valido = servicio.ValidarOtp(request);
-
-    if (valido) {
-        return ResponseEntity.ok(
-                java.util.Map.of(
-                        "status", "OK",
-                        "message", "Ingreso correcto"
-                )
-    );
-}
-
-    return ResponseEntity.badRequest().body(
-            java.util.Map.of(
-                    "status", "ERROR",
-                    "message", "OTP incorrecto o expirado"
-            )
-        );
-    } */
-
+    
     // =========================
     // COMPLETAR PERFIL
     // =========================
-    @PostMapping("/completar-perfil")
-    public ResponseEntity<?> completarPerfil(
-            @RequestBody CompletarPerfilRequest request) {
+    @PostMapping("/completar")
+    public ResponseEntity<?> completar(@RequestBody CompletarPerfilRequest request) {
 
-        Usuarios usuario =
-                servicio.completarPerfil(request);
+        return ResponseEntity.ok(servicio.completarPerfil(request));
+    }   
 
-        if (usuario != null) {
+    
+    // =========================
+    // OBTENER PERFIL DESDE POSTGRESQL POR TELÉFONO
+    // =========================
+   @GetMapping("/perfil/{id}")
+    public ResponseEntity<?> obtenerPerfil(@PathVariable Long id) {
 
-            return ResponseEntity.ok(usuario);
-        }
+    // Usamos el método estándar de Spring Data JPA (findById)
+    // que devuelve un Optional, por lo que usamos .orElse(null) para mantener tu lógica
+    Usuarios usuario = repositorioUsuario.findById(id).orElse(null);
 
-        return ResponseEntity
-                .badRequest()
-                .body("Usuario no encontrado");
+    if (usuario == null) {
+        return ResponseEntity.notFound().build();
     }
+
+    return ResponseEntity.ok(usuario);
+    }
+
 }

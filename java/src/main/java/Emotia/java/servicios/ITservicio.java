@@ -12,10 +12,7 @@ public interface ITservicio {
 
     public List<Usuarios> listaUsuarios();
 
-   /* void enviarotp (OtpREquest request);*/
-
-   /*boolean ValidarOtp (LogginRequest request);*/
-
     Usuarios completarPerfil(CompletarPerfilRequest request);
+
 
 }

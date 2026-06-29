@@ -1,6 +1,6 @@
 package Emotia.java.modelo;
 
-import java.sql.Date;
+import java.util.Date;
 import java.time.LocalDateTime;
 
 import jakarta.annotation.Generated;
@@ -19,17 +19,52 @@ public class Usuarios {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     @Column (name = "id_usuario")
-    private int Idusuarios;
+    private Long Idusuarios;
+
     private String nombre;
+
     private String apellido;
+
     private String telefono;
+
+    private String correo;
+
+    private Date nacimiento;
+
+    private String pais;
+    
     @Column (name = "fecha_registro")
     private Date fechaGenerado;
+
     
-    public int getIdusuarios() {
+    public Usuarios(String correo, Date nacimiento, String pais, Date fechaGenerado) {
+        this.correo = correo;
+        this.nacimiento = nacimiento;
+        this.pais = pais;
+        this.fechaGenerado = fechaGenerado;
+    }
+    public String getCorreo() {
+        return correo;
+    }
+    public void setCorreo(String correo) {
+        this.correo = correo;
+    }
+    public Date getNacimiento() {
+        return nacimiento;
+    }
+    public void setNacimiento(Date nacimiento) {
+        this.nacimiento = nacimiento;
+    }
+    public String getPais() {
+        return pais;
+    }
+    public void setPais(String pais) {
+        this.pais = pais;
+    }
+    public Long getIdusuarios() {
         return Idusuarios;
     }
-    public void setIdusuarios(int idusuarios) {
+    public void setIdusuarios(Long idusuarios) {
         Idusuarios = idusuarios;
     }
     public String getNombre() {
@@ -56,7 +91,7 @@ public class Usuarios {
     public void setFechaGenerado(Date fechaGenerado) {
         this.fechaGenerado = fechaGenerado;
     }
-    public Usuarios(int idusuarios, String nombre, String apellido, String telefono, Date fechaGenerado) {
+    public Usuarios(Long idusuarios, String nombre, String apellido, String telefono, Date fechaGenerado) {
         Idusuarios = idusuarios;
         this.nombre = nombre;
         this.apellido = apellido;
@@ -65,18 +100,6 @@ public class Usuarios {
     }
     public Usuarios() {
     }
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Idusuarios;
-        result = prime * result + ((nombre == null) ? 0 : nombre.hashCode());
-        result = prime * result + ((apellido == null) ? 0 : apellido.hashCode());
-        result = prime * result + ((telefono == null) ? 0 : telefono.hashCode());
-        result = prime * result + ((fechaGenerado == null) ? 0 : fechaGenerado.hashCode());
-        return result;
-    }
-    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
