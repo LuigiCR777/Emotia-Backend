@@ -14,4 +14,6 @@ public interface ITservicioDiario {
     public List<Diario> diarios ();
     
     public void eliminar (Long id);
+
+    List<Diario> diariosPorUsuario(Long idUsuario);
 }

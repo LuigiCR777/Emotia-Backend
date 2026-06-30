@@ -50,6 +50,11 @@ public class servicioDiarioIMPL implements ITservicioDiario{
         repositorioDiario.deleteById(id);
     }
 
+    @Override
+    public List<Diario> diariosPorUsuario(Long idUsuario) {
+        return repositorioDiario.findByIdUsuarios_IdUsuario(idUsuario);
+    }
+
     
 
     

@@ -38,4 +38,9 @@ public class DiarioController {
 
         servicio.eliminar(id);
     }
+
+    @GetMapping("/usuario/{idUsuario}")
+    public ResponseEntity<?> listarPorUsuario(@PathVariable Long idUsuario) {                                                               
+        return ResponseEntity.ok(servicio.diariosPorUsuario(idUsuario));
+    }
 }
