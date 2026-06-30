@@ -3,8 +3,6 @@ package Emotia.java.repositorio;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.google.common.base.Optional;
-
 import Emotia.java.modelo.Usuarios;
 
 public interface ITrepositorioUsuario extends JpaRepository<Usuarios,Long>{

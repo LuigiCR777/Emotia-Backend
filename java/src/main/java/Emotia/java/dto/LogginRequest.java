@@ -1,10 +1,13 @@
 package Emotia.java.dto;
 
 public class LogginRequest {
-    
+
     private String telefono;
 
-    public LogginRequest(String telefono, String codigo) {
+    public LogginRequest() {
+    }
+
+    public LogginRequest(String telefono) {
         this.telefono = telefono;
     }
 
@@ -15,10 +18,4 @@ public class LogginRequest {
     public void setTelefono(String telefono) {
         this.telefono = telefono;
     }
-
-    public LogginRequest() {
-    }
-    
-
-    
 }
