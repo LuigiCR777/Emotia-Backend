@@ -30,23 +30,28 @@ public class RegistroController {
     // VERIFICAR Y GUARDAR NUMERO
     //===========================
     @PostMapping("/firebase-login")
-    public ResponseEntity<?> firebaseLogin(
-            @RequestBody LogginRequest request) {
+public ResponseEntity<?> firebaseLogin(@RequestBody LogginRequest request) {
 
-        String telefono = request.getTelefono();
-        
-        Usuarios usuario = repositorioUsuario.findByTelefono(telefono);
+    String telefono = request.getTelefono();
 
-        if (usuario == null) {
-
-            usuario = new Usuarios();
-            usuario.setTelefono(telefono);
-        }
-
-        usuario = repositorioUsuario.save(usuario);
-        
-    return ResponseEntity.ok(usuario);
+    if (telefono == null || telefono.trim().isEmpty()) {
+        return ResponseEntity.badRequest().body("El teléfono es obligatorio");
     }
+
+    Usuarios usuario = repositorioUsuario.findByTelefono(telefono);
+
+    if (usuario == null) {
+        usuario = new Usuarios();
+        usuario.setTelefono(telefono);
+        usuario.setNombre("Usuario");
+        usuario.setApellido("");
+        usuario.setCorreo(telefono.replace("+", "") + "@emotia.local");
+    }
+
+    usuario = repositorioUsuario.save(usuario);
+
+    return ResponseEntity.ok(usuario);
+}
     
     // =========================
     // COMPLETAR PERFIL

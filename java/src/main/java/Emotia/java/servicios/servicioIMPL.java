@@ -34,7 +34,7 @@ public class servicioIMPL implements ITservicio{
 
 
     @Override
-public Usuarios completarPerfil(CompletarPerfilRequest request) {
+    public Usuarios completarPerfil(CompletarPerfilRequest request) {
 
     // MODIFICADO: busca por id si viene, si no busca por teléfono
     Usuarios usuarioExistente = null;
