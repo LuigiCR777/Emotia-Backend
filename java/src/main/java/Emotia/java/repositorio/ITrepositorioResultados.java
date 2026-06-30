@@ -17,6 +17,6 @@ public interface ITrepositorioResultados extends JpaRepository<Resultados, Long>
 
     Resultados findFirstByOrderByIdResultadoDesc();
     
-    @Query("SELECT r FROM Resultados r WHERE r.idtest.tipoTest = :tipoTest AND r.idtest.idUsuario.Idusuarios = :idUsuario ORDER BY r.idResultado DESC")
+    @Query("SELECT r FROM Resultados r WHERE r.idtest.tipoTest = :tipoTest AND r.idtest.idUsuario.idUsuario = :idUsuario ORDER BY r.idResultado DESC")
     List<Resultados> findByTipoTestYUsuario(@Param("tipoTest") String tipoTest, @Param("idUsuario") Long idUsuario);
 }

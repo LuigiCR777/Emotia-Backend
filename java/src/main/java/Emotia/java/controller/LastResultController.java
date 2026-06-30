@@ -55,14 +55,14 @@ public class LastResultController {
     }
 
     // Flutter llama esto en la pantalla de progreso → devuelve los 3 tests
-    @GetMapping("/resumen")
-    public ResponseEntity<?> obtenerResumenPorUsuario() {
+    @GetMapping("/resumen/{idUsuario}")
+    public ResponseEntity<?> obtenerResumenPorUsuario(@PathVariable Long idUsuario) {
         try {
             List<String> tipos = List.of("PHQ-9", "GAD-7", "DASS-21");
             List<Map<String, Object>> resumen = new ArrayList<>();
 
             for (String tipo : tipos) {
-                List<Resultados> resultados = repositorioResultados.findByTipoTestYUsuario(tipo, 1L);
+                List<Resultados> resultados = repositorioResultados.findByTipoTestYUsuario(tipo, idUsuario);
                 Resultados resultado = resultados.isEmpty() ? null : resultados.get(0);
 
                 Map<String, Object> item = new HashMap<>();
