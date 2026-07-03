@@ -33,7 +33,7 @@ public class RegistroController {
             return ResponseEntity.badRequest().body("El usuario es obligatorio");
         }
 
-        if (request.getPassword() == null || request.getPassword().trim().isEmpty()) {
+        if (request.getContrasena() == null || request.getContrasena().trim().isEmpty()) {
             return ResponseEntity.badRequest().body("La contraseña es obligatoria");
         }
 
@@ -43,7 +43,7 @@ public class RegistroController {
             return ResponseEntity.status(401).body("Usuario no encontrado");
         }
 
-        if (!usuario.getContrasena().equals(request.getPassword())) {
+        if (!usuario.getContrasena().equals(request.getContrasena())) {
             return ResponseEntity.status(401).body("Contraseña incorrecta");
         }
 

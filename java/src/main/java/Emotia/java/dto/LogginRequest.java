@@ -3,14 +3,14 @@ package Emotia.java.dto;
 public class LogginRequest {
 
     private String usuario;
-    private String password;
+    private String contrasena;
 
     public LogginRequest() {
     }
 
-    public LogginRequest(String usuario, String password) {
+    public LogginRequest(String usuario, String contrasena) {
         this.usuario = usuario;
-        this.password = password;
+        this.contrasena = contrasena;
     }
 
     public String getUsuario() {
@@ -21,11 +21,11 @@ public class LogginRequest {
         this.usuario = usuario;
     }
 
-    public String getPassword() {
-        return password;
+    public String getContrasena() {
+        return contrasena;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena;
     }
 }
