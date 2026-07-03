@@ -24,6 +24,27 @@ public class Usuarios {
     private String correo;
     private Date nacimiento;
     private String pais;
+    private String contrasena;
+
+    @Column (name = "usuario")
+    private String usuario;
+    
+
+    public String getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
+    }
+
+    public String getContrasena() {
+        return contrasena;
+    }
+
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena;
+    }
 
     @Column(name = "fecha_registro")
     private Date fechaGenerado;

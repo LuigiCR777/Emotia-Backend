@@ -2,20 +2,30 @@ package Emotia.java.dto;
 
 public class LogginRequest {
 
-    private String telefono;
+    private String usuario;
+    private String password;
 
     public LogginRequest() {
     }
 
-    public LogginRequest(String telefono) {
-        this.telefono = telefono;
+    public LogginRequest(String usuario, String password) {
+        this.usuario = usuario;
+        this.password = password;
     }
 
-    public String getTelefono() {
-        return telefono;
+    public String getUsuario() {
+        return usuario;
     }
 
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
