@@ -44,6 +44,10 @@ public class servicioIMPL implements ITservicio {
                 usuarioExistente.setApellido(request.getApellido());
             }
 
+            if (request.getUsuario() != null) {
+                usuarioExistente.setUsuario(request.getUsuario());
+            }
+
             if (request.getCorreo() != null) {
                 usuarioExistente.setCorreo(request.getCorreo());
             }
