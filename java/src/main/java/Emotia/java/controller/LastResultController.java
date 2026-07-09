@@ -95,4 +95,36 @@ public class LastResultController {
             return ResponseEntity.internalServerError().body("Error: " + e.getMessage());
         }
     }
+    @GetMapping("/admin/resultados")
+    public ResponseEntity<?> listarResultadosAdmin() {
+    List<Resultados> lista = repositorioResultados.findAll();
+
+    List<Map<String, Object>> respuesta = new ArrayList<>();
+
+    for (Resultados r : lista) {
+        Map<String, Object> item = new HashMap<>();
+
+        item.put("idResultado", r.getIdResultado());
+        item.put("puntaje", r.getPuntaje());
+        item.put("nivelRiesgo", r.getNivelRiesgo());
+        item.put("fecha", r.getFechaResultado());
+
+        if (r.getIdtest() != null) {
+            item.put("tipoTest", r.getIdtest().getTipoTest());
+
+            if (r.getIdtest().getIdUsuario() != null) {
+                item.put("usuario", r.getIdtest().getIdUsuario().getUsuario());
+            } else {
+                item.put("usuario", "Sin usuario");
+            }
+        } else {
+            item.put("tipoTest", "Sin test");
+            item.put("usuario", "Sin usuario");
+        }
+
+        respuesta.add(item);
+    }
+
+    return ResponseEntity.ok(respuesta);
+}
 }
