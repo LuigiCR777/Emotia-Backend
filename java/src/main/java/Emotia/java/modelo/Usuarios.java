@@ -28,7 +28,9 @@ public class Usuarios {
 
     @Column (name = "usuario")
     private String usuario;
-    
+
+    @Column(name = "rol")
+    private String rol;
 
     public String getUsuario() {
         return usuario;

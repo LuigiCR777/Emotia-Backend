@@ -64,7 +64,7 @@ public class AnaliticaController {
     }
 
     @GetMapping("/listar")
-public ResponseEntity<?> listarAnalitica() {
+    public ResponseEntity<?> listarAnalitica() {
 
     try {
 
