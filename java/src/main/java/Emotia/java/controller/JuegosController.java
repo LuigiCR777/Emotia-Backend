@@ -13,7 +13,7 @@ import Emotia.java.servicios.ITservicioJuegos;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("api/juegos")
+@RequestMapping("/api/juegos")
 public class JuegosController {
 
     @Autowired

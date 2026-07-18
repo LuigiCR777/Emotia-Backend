@@ -1,0 +1,323 @@
+<!-- Created with Jaspersoft Studio version 7.0.6.final using JasperReports Library version 7.0.6-5d2a603fdc6b3db8f842a83383e594f41891534d  -->
+<jasperReport name="Emotia" language="java" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="0d5ae0cd-877f-4afb-9232-94e786b54136">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Emotia"/>
+	<style name="titulo" forecolor="#0E5A8A"/>
+	<style name="texto_secundario" mode="Opaque" forecolor="#4A4443"/>
+	<parameter name="User" class="java.lang.Integer"/>
+	<parameter name="phq" class="java.lang.String">
+		<defaultValueExpression><![CDATA["PHQ-9"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="gad" class="java.lang.String">
+		<defaultValueExpression><![CDATA["GAD-7"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="dass" class="java.lang.String">
+		<defaultValueExpression><![CDATA["DASS-21"]]></defaultValueExpression>
+	</parameter>
+	<query language="SQL"><![CDATA[WITH ultimos_test AS (
+    SELECT
+        a.id_usuario,
+        a.nombre || ' ' || COALESCE(a.apellido, '') AS nombre,
+        b.id_test,
+        b.tipo_test,
+        b.fecha_test,
+        e.puntaje,
+        e.nivel_riesgo,
+
+        ROW_NUMBER() OVER (
+            PARTITION BY b.tipo_test
+            ORDER BY b.fecha_test DESC, b.id_test DESC
+        ) AS fila
+
+    FROM usuarios a
+
+    INNER JOIN tests_emocionales b
+        ON b.id_usuario = a.id_usuario
+
+    INNER JOIN resultados e
+        ON e.id_test = b.id_test
+
+    WHERE a.id_usuario = $P{User}
+),
+
+emociones AS (
+    SELECT
+        b.id_test,
+        MAX(d.emocion_detectada) AS emocion_detectada
+    FROM tests_emocionales b
+
+    INNER JOIN respuestas_test c
+        ON c.id_test = b.id_test
+
+    INNER JOIN analitica_ia_test d
+        ON d.id_respuesta = c.id_respuesta
+
+    WHERE d.emocion_detectada <> 'No detectado'
+
+    GROUP BY b.id_test
+),
+
+datos AS (
+    SELECT
+        u.*,
+        em.emocion_detectada
+    FROM ultimos_test u
+
+    LEFT JOIN emociones em
+        ON em.id_test = u.id_test
+
+    WHERE u.fila = 1
+)
+
+SELECT
+    MAX(nombre) AS nombre,
+    id_usuario,
+
+    MAX(CASE
+        WHEN tipo_test = 'PHQ-9'
+        THEN puntaje
+    END) AS puntaje_phq,
+
+    MAX(CASE
+        WHEN tipo_test = 'PHQ-9'
+        THEN nivel_riesgo
+    END) AS riesgo_phq,
+
+    MAX(CASE
+        WHEN tipo_test = 'PHQ-9'
+        THEN emocion_detectada
+    END) AS emocion_phq,
+
+    MAX(CASE
+        WHEN tipo_test = 'GAD-7'
+        THEN puntaje
+    END) AS puntaje_gad,
+
+    MAX(CASE
+        WHEN tipo_test = 'GAD-7'
+        THEN nivel_riesgo
+    END) AS riesgo_gad,
+
+    MAX(CASE
+        WHEN tipo_test = 'GAD-7'
+        THEN emocion_detectada
+    END) AS emocion_gad,
+
+    MAX(CASE
+        WHEN tipo_test = 'DASS-21'
+        THEN puntaje
+    END) AS puntaje_dass,
+
+    MAX(CASE
+        WHEN tipo_test = 'DASS-21'
+        THEN nivel_riesgo
+    END) AS riesgo_dass,
+
+    MAX(CASE
+        WHEN tipo_test = 'DASS-21'
+        THEN emocion_detectada
+    END) AS emocion_dass
+
+FROM datos
+GROUP BY id_usuario;]]></query>
+	<field name="nombre" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nombre"/>
+		<property name="com.jaspersoft.studio.field.label" value="nombre"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="usuarios"/>
+	</field>
+	<field name="id_usuario" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="id_usuario"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_usuario"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="usuarios"/>
+	</field>
+	<field name="puntaje_phq" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="puntaje_phq"/>
+		<property name="com.jaspersoft.studio.field.label" value="puntaje_phq"/>
+	</field>
+	<field name="riesgo_phq" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="riesgo_phq"/>
+		<property name="com.jaspersoft.studio.field.label" value="riesgo_phq"/>
+	</field>
+	<field name="emocion_phq" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="emocion_phq"/>
+		<property name="com.jaspersoft.studio.field.label" value="emocion_phq"/>
+	</field>
+	<field name="puntaje_gad" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="puntaje_gad"/>
+		<property name="com.jaspersoft.studio.field.label" value="puntaje_gad"/>
+	</field>
+	<field name="riesgo_gad" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="riesgo_gad"/>
+		<property name="com.jaspersoft.studio.field.label" value="riesgo_gad"/>
+	</field>
+	<field name="emocion_gad" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="emocion_gad"/>
+		<property name="com.jaspersoft.studio.field.label" value="emocion_gad"/>
+	</field>
+	<field name="puntaje_dass" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="puntaje_dass"/>
+		<property name="com.jaspersoft.studio.field.label" value="puntaje_dass"/>
+	</field>
+	<field name="riesgo_dass" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="riesgo_dass"/>
+		<property name="com.jaspersoft.studio.field.label" value="riesgo_dass"/>
+	</field>
+	<field name="emocion_dass" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="emocion_dass"/>
+		<property name="com.jaspersoft.studio.field.label" value="emocion_dass"/>
+	</field>
+	<group name="PHQ-9">
+		<groupHeader>
+			<band height="88">
+				<element kind="frame" uuid="41c600c0-595d-48ea-b1bf-dd5bb9430c2e" positionType="FixRelativeToBottom" mode="Opaque" x="0" y="7" width="559" height="40" forecolor="#12897A" backcolor="#12897A" style="texto_secundario">
+					<element kind="textField" uuid="4220c1a1-a7bd-429d-bc38-364663c7e37c" x="11" y="6" width="100" height="30" forecolor="#FFFFFF" fontSize="18.0" hTextAlign="Left" vTextAlign="Middle">
+						<expression><![CDATA["PHQ-9"]]></expression>
+					</element>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0" style="texto_secundario">
+						<pen lineWidth="0.0" lineStyle="Dotted" lineColor="#12897A"/>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+				</element>
+				<element kind="textField" uuid="45bdfd4a-6a52-4d17-89fd-3f83b5814acc" x="11" y="50" width="68" height="19" bold="true">
+					<expression><![CDATA["Puntaje :"]]></expression>
+				</element>
+				<element kind="textField" uuid="11766e01-ca1a-4715-8d85-4b41cef63b84" x="10" y="69" width="100" height="19" bold="true">
+					<expression><![CDATA["Nivel de Riesgo :"]]></expression>
+				</element>
+				<element kind="textField" uuid="d5b3c0f2-b2d3-4129-b206-f14bd3225fe6" x="280" y="50" width="120" height="19" bold="true">
+					<expression><![CDATA["Emocion Detectada :"]]></expression>
+				</element>
+				<element kind="textField" uuid="80f925cd-391e-4ec3-93d7-7108a15f43c7" x="400" y="50" width="100" height="30">
+					<expression><![CDATA[$F{emocion_phq}]]></expression>
+				</element>
+				<element kind="textField" uuid="4c49fefd-331a-447e-9267-fccba86ce708" x="80" y="48" width="100" height="22">
+					<expression><![CDATA[$F{puntaje_phq}]]></expression>
+				</element>
+				<element kind="textField" uuid="fbf66731-beef-432a-ae76-8d2d753987d9" x="110" y="70" width="100" height="18">
+					<expression><![CDATA[$F{riesgo_phq}]]></expression>
+				</element>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="GAD-7">
+		<groupHeader>
+			<band height="88">
+				<element kind="frame" uuid="1da7b280-5ff4-47d7-a965-fe6572310616" positionType="FixRelativeToBottom" mode="Opaque" x="0" y="7" width="559" height="40" forecolor="#12897A" backcolor="#12897A" style="texto_secundario">
+					<element kind="textField" uuid="fea97371-dc9d-45f8-b05f-ba6995b269ab" x="11" y="6" width="100" height="30" forecolor="#FFFFFF" fontSize="18.0" hTextAlign="Left" vTextAlign="Middle">
+						<expression><![CDATA["GAD-7"]]></expression>
+					</element>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0" style="texto_secundario">
+						<pen lineWidth="0.0" lineStyle="Dotted" lineColor="#12897A"/>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+				</element>
+				<element kind="textField" uuid="ded14f53-2374-4067-83c8-1099cadbfbb4" x="11" y="50" width="68" height="19" bold="true">
+					<expression><![CDATA["Puntaje :"]]></expression>
+				</element>
+				<element kind="textField" uuid="6736d664-9cf2-413e-8492-bdef895cf847" x="10" y="69" width="100" height="19" bold="true">
+					<expression><![CDATA["Nivel de Riesgo :"]]></expression>
+				</element>
+				<element kind="textField" uuid="ccf36102-ed62-4f4a-9f2d-edfc89d2c6fd" x="280" y="50" width="120" height="19" bold="true">
+					<expression><![CDATA["Emocion Detectada :"]]></expression>
+				</element>
+				<element kind="textField" uuid="b36fae86-54ae-4d55-b222-4f9c0e33bac7" x="79" y="50" width="101" height="18">
+					<expression><![CDATA[$F{puntaje_gad}]]></expression>
+				</element>
+				<element kind="textField" uuid="14578bb2-a06a-4236-9d64-f77e0781a4fd" x="111" y="69" width="169" height="18">
+					<expression><![CDATA[$F{riesgo_gad}]]></expression>
+				</element>
+				<element kind="textField" uuid="9a3f80b9-fe53-4140-8a43-d35c6113586b" x="400" y="47" width="130" height="30">
+					<expression><![CDATA[$F{emocion_gad}]]></expression>
+				</element>
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="DASS-21">
+		<groupHeader>
+			<band height="88">
+				<element kind="frame" uuid="7c384aad-8c06-4c3a-bb6a-ef72933a3f7c" positionType="FixRelativeToBottom" mode="Opaque" x="0" y="5" width="559" height="40" forecolor="#12897A" backcolor="#12897A" style="texto_secundario">
+					<element kind="textField" uuid="edd04c6b-116c-4e77-bff2-b8e146b5fd8b" x="11" y="6" width="100" height="30" forecolor="#FFFFFF" fontSize="18.0" hTextAlign="Left" vTextAlign="Middle">
+						<expression><![CDATA["DASS-21"]]></expression>
+					</element>
+					<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0" style="texto_secundario">
+						<pen lineWidth="0.0" lineStyle="Dotted" lineColor="#12897A"/>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+				</element>
+				<element kind="textField" uuid="b084eb43-9c5c-4151-8796-aca4a8a400c5" x="11" y="50" width="68" height="19" bold="true">
+					<expression><![CDATA["Puntaje :"]]></expression>
+				</element>
+				<element kind="textField" uuid="e9cf2470-3a72-4906-8a86-5176e436dd69" x="10" y="69" width="100" height="19" bold="true">
+					<expression><![CDATA["Nivel de Riesgo :"]]></expression>
+				</element>
+				<element kind="textField" uuid="4ba1086f-17e6-4c32-b591-22c7ac7e8db5" x="280" y="50" width="120" height="19" bold="true">
+					<expression><![CDATA["Emocion Detectada :"]]></expression>
+				</element>
+				<element kind="textField" uuid="ae476ffc-a7ec-41f7-9fe3-c36249307c02" x="80" y="50" width="100" height="18">
+					<expression><![CDATA[$F{puntaje_dass}]]></expression>
+				</element>
+				<element kind="textField" uuid="cb7f3082-2682-4ba9-98db-4f8462e6626c" x="400" y="50" width="150" height="30">
+					<expression><![CDATA[$F{emocion_dass}]]></expression>
+				</element>
+				<element kind="textField" uuid="cf795185-2e8a-4c8a-a3d2-237e31744b64" x="111" y="69" width="169" height="18">
+					<expression><![CDATA[$F{riesgo_dass}]]></expression>
+				</element>
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			</band>
+		</groupHeader>
+	</group>
+	<background splitType="Stretch"/>
+	<title height="80" splitType="Stretch">
+		<element kind="textField" uuid="17e4db29-05d5-48b1-b185-a66096b07fe6" key="" mode="Transparent" x="80" y="0" width="300" height="30" fontSize="19.0" blankWhenNull="false" bold="true" style="titulo">
+			<expression><![CDATA["Reporte de escalas de tamizaje"
+]]></expression>
+		</element>
+		<element kind="textField" uuid="b2b511f4-0285-490f-91a1-cdfd4aa9bd20" x="80" y="30" width="200" height="30" style="texto_secundario">
+			<expression><![CDATA["EmotIA · PHQ-9, GAD-7 y DASS-21"
+
+]]></expression>
+		</element>
+		<element kind="frame" uuid="913f980d-0c41-4e4c-984a-4a5e00fd64fd" x="0" y="70" width="559" height="10" style="texto_secundario">
+			<box style="texto_secundario">
+				<pen lineColor="#8FA6A4"/>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="image" uuid="8e0f55fa-8755-4f02-b347-7abe90ad1a5a" x="10" y="0" width="50" height="50">
+			<expression><![CDATA["C:/Emotia/Emotia-Backend/java/src/reports/logo.png"]]></expression>
+		</element>
+	</title>
+	<pageHeader height="69">
+		<element kind="textField" uuid="dd28d2f8-4f4b-4df2-9311-3ea2da1c4e9c" x="20" y="10" width="79" height="30">
+			<expression><![CDATA["Paciente:"]]></expression>
+		</element>
+		<element kind="textField" uuid="5399aa90-fa72-46ff-90e7-3c7c8e8d4665" x="300" y="10" width="79" height="30">
+			<expression><![CDATA["ID Paciente:"]]></expression>
+		</element>
+		<element kind="textField" uuid="09916907-6696-45e6-9764-b01389c3e3b1" x="130" y="10" width="100" height="30">
+			<expression><![CDATA[$F{nombre}]]></expression>
+		</element>
+		<element kind="textField" uuid="ceb68f5f-7924-4f78-9892-f97d190c3da6" x="379" y="10" width="100" height="30">
+			<expression><![CDATA[$F{id_usuario}]]></expression>
+		</element>
+		<element kind="textField" uuid="33df9d8f-b0fa-4caa-aec6-d21531b59739" x="20" y="47" width="110" height="22">
+			<expression><![CDATA["Fecha del Reporte :"]]></expression>
+		</element>
+		<element kind="textField" uuid="efb825e1-4cea-4ad2-927a-18067a533b63" x="130" y="47" width="100" height="22" pattern="MMMMM dd, yyyy">
+			<expression><![CDATA[new java.util.Date()]]></expression>
+		</element>
+	</pageHeader>
+</jasperReport>
