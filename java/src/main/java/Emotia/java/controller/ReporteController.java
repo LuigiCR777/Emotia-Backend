@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -32,46 +33,63 @@ public class ReporteController {
     }
 
     @GetMapping("/reporte")
-    public ResponseEntity<byte[]> generarReporte(
-            @RequestParam(name = "User") Long user) throws Exception {
-
-        InputStream reporte = getClass()
-                .getResourceAsStream("/reports/Emotia.jasper");
-
-        if (reporte == null) {
-            throw new RuntimeException(
-                    "No se encontró el archivo /reports/Emotia.jasper"
-            );
-        }
-
-        Map<String, Object> parametros = new HashMap<>();
-
-        // Debe llamarse exactamente igual al parámetro de Jasper
-        parametros.put("User", user);
+    public ResponseEntity<?> generarReporte(
+            @RequestParam(name = "User") Integer user) {
 
         try (
-                InputStream reporteStream = reporte;
-                Connection conexion = dataSource.getConnection()
+            InputStream reporte = getClass()
+                    .getResourceAsStream("/reports/Emotia.jasper")
         ) {
 
-            JasperPrint jasperPrint = JasperFillManager.fillReport(
-                    reporteStream,
-                    parametros,
-                    conexion
-            );
+            if (reporte == null) {
+                return ResponseEntity
+                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .body("No se encontró /reports/Emotia.jasper");
+            }
 
-            byte[] pdf = JasperExportManager
-                    .exportReportToPdf(jasperPrint);
+            Map<String, Object> parametros = new HashMap<>();
+            parametros.put("User", user);
 
-            return ResponseEntity.ok()
-                    .header(
-                            HttpHeaders.CONTENT_DISPOSITION,
-                            "inline; filename=reporte_usuario_" + user + ".pdf"
-                    )
-                    .contentType(MediaType.APPLICATION_PDF)
-                    .contentLength(pdf.length)
-                    .body(pdf);
+            try (Connection conexion = dataSource.getConnection()) {
+
+                JasperPrint jasperPrint =
+                        JasperFillManager.fillReport(
+                                reporte,
+                                parametros,
+                                conexion
+                        );
+
+                byte[] pdf =
+                        JasperExportManager.exportReportToPdf(
+                                jasperPrint
+                        );
+
+                return ResponseEntity.ok()
+                        .header(
+                                HttpHeaders.CONTENT_DISPOSITION,
+                                "inline; filename=\"reporte_usuario_"
+                                        + user
+                                        + ".pdf\""
+                        )
+                        .contentType(MediaType.APPLICATION_PDF)
+                        .contentLength(pdf.length)
+                        .body(pdf);
+            }
+
+        } catch (Exception error) {
+
+            error.printStackTrace();
+
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body(
+                            "Error al generar reporte: "
+                                    + error.getClass().getName()
+                                    + " - "
+                                    + error.getMessage()
+                    );
         }
     }
 }
-
