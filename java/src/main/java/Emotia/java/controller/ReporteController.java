@@ -75,7 +75,7 @@ public class ReporteController {
              * declarados dentro del reporte Jasper.
              */
             parametros.put("User", user);
-            parametros.put("LOGO", logo);
+            parametros.put("Logo", logo);
 
             try (Connection conexion = dataSource.getConnection()) {
 
