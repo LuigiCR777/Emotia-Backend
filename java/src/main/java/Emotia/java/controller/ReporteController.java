@@ -32,24 +32,50 @@ public class ReporteController {
         this.dataSource = dataSource;
     }
 
-    @GetMapping("/reporte")
+    @GetMapping(
+            value = "/reporte",
+            produces = MediaType.APPLICATION_PDF_VALUE
+    )
     public ResponseEntity<?> generarReporte(
-            @RequestParam(name = "User") Integer user) {
+            @RequestParam(name = "User") Integer user
+    ) {
 
         try (
-            InputStream reporte = getClass()
-                    .getResourceAsStream("/reports/Emotia.jasper")
+                InputStream reporte = getClass()
+                        .getResourceAsStream("/reports/Emotia.jasper");
+
+                InputStream logo = getClass()
+                        .getResourceAsStream("/reports/logo.png")
         ) {
 
             if (reporte == null) {
                 return ResponseEntity
                         .status(HttpStatus.INTERNAL_SERVER_ERROR)
                         .contentType(MediaType.TEXT_PLAIN)
-                        .body("No se encontró /reports/Emotia.jasper");
+                        .body(
+                                "No se encontró el reporte "
+                                + "/reports/Emotia.jasper"
+                        );
+            }
+
+            if (logo == null) {
+                return ResponseEntity
+                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .body(
+                                "No se encontró el logo "
+                                + "/reports/logo.png"
+                        );
             }
 
             Map<String, Object> parametros = new HashMap<>();
+
+            /*
+             * Deben coincidir exactamente con los parámetros
+             * declarados dentro del reporte Jasper.
+             */
             parametros.put("User", user);
+            parametros.put("LOGO", logo);
 
             try (Connection conexion = dataSource.getConnection()) {
 
@@ -81,14 +107,28 @@ public class ReporteController {
 
             error.printStackTrace();
 
+            Throwable causa = error;
+
+            while (causa.getCause() != null) {
+                causa = causa.getCause();
+            }
+
+            String detalle = causa.getMessage();
+
+            if (detalle == null || detalle.isBlank()) {
+                detalle = causa.getClass().getName();
+            }
+
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .contentType(MediaType.TEXT_PLAIN)
                     .body(
-                            "Error al generar reporte: "
-                                    + error.getClass().getName()
-                                    + " - "
-                                    + error.getMessage()
+                            "Error al generar reporte:\n"
+                            + "Tipo: "
+                            + causa.getClass().getName()
+                            + "\n"
+                            + "Detalle: "
+                            + detalle
                     );
         }
     }
