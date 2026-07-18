@@ -36,11 +36,11 @@ public class ReporteController {
             @RequestParam(name = "User") Long user) throws Exception {
 
         InputStream reporte = getClass()
-                .getResourceAsStream("/reports/Reporte.jasper");
+                .getResourceAsStream("/reports/Emotia.jasper");
 
         if (reporte == null) {
             throw new RuntimeException(
-                    "No se encontró el archivo /reports/Reporte.jasper"
+                    "No se encontró el archivo /reports/Emotia.jasper"
             );
         }
 
