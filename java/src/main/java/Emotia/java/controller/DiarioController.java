@@ -13,7 +13,7 @@ import Emotia.java.servicios.ITservicioDiario;
 
 @RestController
 @RequestMapping("/api/diario")
-@CrossOrigin("*")
+//@CrossOrigin("*")
 public class DiarioController {
 
     @Autowired
