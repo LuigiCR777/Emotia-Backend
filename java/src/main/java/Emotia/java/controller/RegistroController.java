@@ -12,7 +12,7 @@ import Emotia.java.servicios.ITservicio;
 
 @RestController
 @RequestMapping("/api/auth")
-//@CrossOrigin("*")
+@CrossOrigin("*")
 public class RegistroController {
 
     @Autowired

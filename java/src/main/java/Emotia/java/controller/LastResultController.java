@@ -21,7 +21,7 @@ import Emotia.java.servicios.servicioAnaliticaIMPL;
 
 @RequestMapping("/api/resultado")
 @RestController
-//@CrossOrigin("*")
+@CrossOrigin("*")
 public class LastResultController {
     
     @Autowired

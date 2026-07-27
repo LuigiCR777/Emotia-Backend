@@ -13,7 +13,7 @@ import Emotia.java.dto.TecnicaDTO;
 import Emotia.java.servicios.ITservicioTecnica;
 
 @RestController
-//@CrossOrigin("*")
+@CrossOrigin("*")
 @RequestMapping("api/tecnica")
 public class TecnicaController {
 

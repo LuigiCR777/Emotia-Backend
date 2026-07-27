@@ -15,7 +15,7 @@ import Emotia.java.servicios.ITservicioTest; // Importamos la interfaz del servi
 
 @RestController
 @RequestMapping("/testemocional")
-//@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*")
 public class TestEmocionalController {
 
     // Inyectamos el servicio que maneja la lógica y la persistencia

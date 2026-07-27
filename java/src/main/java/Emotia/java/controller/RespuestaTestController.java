@@ -13,7 +13,7 @@ import Emotia.java.servicios.servicioRespuestaIMPL;
 
 @RestController
 @RequestMapping("/api/respuestas")
-//@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*")
 public class RespuestaTestController {
 
     @Autowired

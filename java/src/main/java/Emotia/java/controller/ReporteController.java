@@ -21,7 +21,7 @@ import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 
-//@CrossOrigin("*")
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/api")
 public class ReporteController {

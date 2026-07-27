@@ -19,7 +19,7 @@ import Emotia.java.repositorio.ITrespuestas;
 
 @RestController
 @RequestMapping("/api/analitica-ia")
-//@CrossOrigin(origins = "*") // Permitir solicitudes desde cualquier origen (ajustar según necesidades)
+@CrossOrigin(origins = "*") // Permitir solicitudes desde cualquier origen (ajustar según necesidades)
 public class AnaliticaController {
 
     @Autowired

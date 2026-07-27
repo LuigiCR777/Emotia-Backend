@@ -13,7 +13,7 @@ import Emotia.java.servicios.ITservicio;
 
 @RestController
 @RequestMapping("/api/listar")
-//@CrossOrigin("*")
+@CrossOrigin("*")
 
 public class ListarUsuariosController {
 
